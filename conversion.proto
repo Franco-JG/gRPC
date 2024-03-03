@@ -1,0 +1,23 @@
+// Protocol Buffers es un Lenguaje de definición de interfaz simple (IDL) independiente del lenguaje y de plataforma neutra para definir esquemas de estructura de datos y programar interfaces. Es compatible con los formatos de cable binarios y de texto, y funciona con varios protocolos de conexión estándar diferentes en plataformas distintas.
+
+syntax = "proto3";
+
+package conversion;
+
+service Conversion {
+    rpc convertirLongitud(ConversionRequest) returns (ConversionResponse);
+}
+// Estructura de como se ve una petición
+message ConversionRequest {
+    float valor = 1;
+    string unidadOrigen = 2;
+    string unidadDestino = 3;
+}
+// Estructura de como se ve una respuesta
+message ConversionResponse {
+    float resultado = 1;
+}
+
+// NOTA Referencias: 
+// https://protobuf.dev/reference/protobuf/proto3-spec/
+// https://cloud.google.com/apis/design/proto3?hl=es-419
