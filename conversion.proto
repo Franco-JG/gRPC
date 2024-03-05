@@ -5,13 +5,13 @@ syntax = "proto3";
 package conversion;
 
 service Conversion {
-    rpc convertirLongitud(ConversionRequest) returns (ConversionResponse);
+    rpc convertirLongitudProto(ConversionRequest) returns (ConversionResponse);
 }
 // Estructura de como se ve una petición
 message ConversionRequest {
-    float valor = 1;
-    string unidadOrigen = 2;
-    string unidadDestino = 3;
+    float valorP = 1;
+    string unidadOrigenP = 2;
+    string unidadDestinoP = 3;
 }
 // Estructura de como se ve una respuesta
 message ConversionResponse {

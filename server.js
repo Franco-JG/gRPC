@@ -1,4 +1,5 @@
 // Importamos librerias para usar RPC
+import colors from '@colors/colors';    // Agrega colores en la terminal
 import { loadPackageDefinition, Server, ServerCredentials } from '@grpc/grpc-js';
 import { loadSync } from '@grpc/proto-loader';
 
@@ -6,11 +7,11 @@ import { loadSync } from '@grpc/proto-loader';
 const packageDefinition = loadSync('conversion.proto');
 const conversion_proto = loadPackageDefinition(packageDefinition).conversion;
 
-// Funcion que hace la conversion,
+// Función que hace la conversion, recibimos un obj
 function convertirLongitud(call, callback) {
-    const valor = call.request.valor;
-    const unidadOrigen = call.request.unidadOrigen;
-    const unidadDestino = call.request.unidadDestino;
+    const valor = call.request.valorP;
+    const unidadOrigen = call.request.unidadOrigenP;
+    const unidadDestino = call.request.unidadDestinoP;
 
     // 1 unidad y su equivalente en metros
     const factores = {
@@ -20,7 +21,7 @@ function convertirLongitud(call, callback) {
         'milla': 1609.344
     };
 
-    const valorEnMetros = valor * factores[unidadOrigen];   //Lo convierte a metros
+    const valorEnMetros = valor * factores[unidadOrigen];
 
     let resultado;
     switch (unidadDestino) {
@@ -31,25 +32,28 @@ function convertirLongitud(call, callback) {
             resultado = valorEnMetros;
             break;
         case 'km':
-            resultado = valorEnMetros / 1000;
+            resultado = (valorEnMetros / 1000);
             break;
         default:
-            callback({ message: 'Unidad de destino no válida' });
+            callback({ message: 'Unidad de destino no válida'});    // Regresamos un obj como el error
             return;
     }
-
-    callback(null, { resultado: resultado });
+    callback(null, { resultado: resultado });   // Regresamos un obj como la respuesta 
+    console.log(`Respuesta enviada: ${resultado.toFixed(1).toString().yellow}`);
 }
 
 const port = '8080'
 
 function main() {
+    // Creamos el servidor RPC
     const server = new Server();
+
+    // Hacemos bind del service en proto con la función en server
     server.addService(conversion_proto.Conversion.service, {
-        convertirLongitud: convertirLongitud,
+        convertirLongitudProto: convertirLongitud,
     });
     server.bindAsync(`localhost:${port}`, ServerCredentials.createInsecure(), () => {
-        console.log(`Servidor gRPC en ejecución en el puerto ${port}`);
+        console.log(`Servidor gRPC en ejecución en el puerto ${port.yellow}`.green);
     });
 }
 
